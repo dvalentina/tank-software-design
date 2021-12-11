@@ -6,18 +6,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class RandomLevelGenerator implements LevelGenerator{
-    private GridPoint2 playerCoordinates;
-    private HashSet<GridPoint2> treesCoordinates = new HashSet<>();
-    private HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
-
     final int levelWidth = 10;
     final int levelHeight = 8;
 
     @Override
     public Level generateLevel() {
-        generateTreesCoordinates();
-        generateTanksCoordinates();
-        generatePlayerCoordinates();
+        HashSet<GridPoint2> treesCoordinates = generateTreesCoordinates();
+        HashSet<GridPoint2> tanksCoordinates = generateTanksCoordinates(treesCoordinates);
+        GridPoint2 playerCoordinates = generatePlayerCoordinates(treesCoordinates, tanksCoordinates);
 
         ArrayList<Tree> trees = new ArrayList<>();
         for (GridPoint2 coordinates : treesCoordinates) {
@@ -32,30 +28,34 @@ public class RandomLevelGenerator implements LevelGenerator{
         return new Level(player, trees, tanks, levelHeight, levelWidth);
     }
 
-    private void generateTreesCoordinates() {
+    private HashSet<GridPoint2> generateTreesCoordinates() {
+        HashSet<GridPoint2> treesCoordinates = new HashSet<>();
         int numberOfTrees = 7 + (int)(Math.random()*7);
         while (treesCoordinates.size() != numberOfTrees) {
             treesCoordinates.add(generateRandomPosition());
-        };
+        }
+        return treesCoordinates;
     }
 
-    private void generatePlayerCoordinates() {
+    private GridPoint2 generatePlayerCoordinates(HashSet<GridPoint2> treesCoordinates, HashSet<GridPoint2> tanksCoordinates) {
         GridPoint2 position = generateRandomPosition();
         while (treesCoordinates.contains(position) || tanksCoordinates.contains(position)) {
             position = generateRandomPosition();
-        };
-        playerCoordinates = position;
+        }
+        return position;
     }
 
-    private void generateTanksCoordinates() {
+    private HashSet<GridPoint2> generateTanksCoordinates(HashSet<GridPoint2> treesCoordinates) {
+        HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
         int numberOfTanks = 1 + (int)(Math.random()*5);
         while (tanksCoordinates.size() != numberOfTanks) {
             GridPoint2 position = generateRandomPosition();
             while (treesCoordinates.contains(position)) {
                 position = generateRandomPosition();
-            };
+            }
             tanksCoordinates.add(position);
-        };
+        }
+        return tanksCoordinates;
     }
 
     private GridPoint2 generateRandomPosition() {
