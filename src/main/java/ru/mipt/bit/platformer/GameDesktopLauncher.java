@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.commands.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     private Level level;
     private Graphics graphics;
     private GameAiAdapter gameAiAdapter = new GameAiAdapter();
+    private CommandsExecutor commandsExecutor = new CommandsExecutor();
 
     @Override
     public void create() {
@@ -49,6 +51,8 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         moveOtherTanks(otherTanks, level);
 //        gameAiAdapter.moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
 
+        commandsExecutor.executeCommands();
+
         graphics.calculateInterpolatedPlayerScreenCoordinates();
         graphics.calculateInterpolatedOtherTanksScreenCoordinates();
 
@@ -60,16 +64,16 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     private void movePlayerIfKeyPressed(Player player, Level level) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.move(Direction.UP, level);
+            commandsExecutor.addCommand(new MoveUpCommand(player, level));
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.move(Direction.LEFT, level);
+            commandsExecutor.addCommand(new MoveLeftCommand(player, level));
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.move(Direction.DOWN, level);
+            commandsExecutor.addCommand(new MoveDownCommand(player, level));
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.move(Direction.RIGHT, level);
+            commandsExecutor.addCommand(new MoveRightCommand(player, level));
         }
     }
 
@@ -77,7 +81,17 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     public void moveOtherTanks(ArrayList<Player> otherTanks, Level level) {
         for (Player tank : otherTanks) {
             Direction direction = Direction.values()[new Random().nextInt(Direction.values().length)];
-            tank.move(direction, level);
+//            tank.move(direction, level);
+            switch (direction) {
+                case UP:
+                    commandsExecutor.addCommand(new MoveUpCommand(tank, level));
+                case LEFT:
+                    commandsExecutor.addCommand(new MoveLeftCommand(tank, level));
+                case DOWN:
+                    commandsExecutor.addCommand(new MoveDownCommand(tank, level));
+                case RIGHT:
+                    commandsExecutor.addCommand(new MoveRightCommand(tank, level));
+            }
         }
     }
 

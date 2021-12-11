@@ -8,7 +8,7 @@ import java.util.HashSet;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Player {
+public class Player implements Movable {
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private GridPoint2 coordinates;
     // which tile the player want to go next
@@ -28,6 +28,7 @@ public class Player {
         return isEqual(this.movementProgress, 1f);
     }
 
+    @Override
     public void move(Direction direction, Level level) {
         if (isMoving()) {
             // check potential player destination for collision with obstacles
