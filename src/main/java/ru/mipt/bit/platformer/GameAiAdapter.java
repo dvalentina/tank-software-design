@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class GameAiAdapter implements Game{
+public class GameAiAdapter{
     private AI ai = new NotRecommendingAI();
 
-    @Override
     public void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
         List<Recommendation> recommendations = ai.recommend(getAiGameState(player, treeObstacles, otherTanks, levelBorders));
         for (Recommendation recommendation : recommendations) {
@@ -31,7 +30,7 @@ public class GameAiAdapter implements Game{
                 newOtherTanks.remove(tank);
                 newOtherTanks.add(player);
 
-                tank.move(direction, treeObstacles, newOtherTanks, levelBorders);
+//                tank.move(direction, treeObstacles, newOtherTanks, levelBorders);
             }
         }
     }

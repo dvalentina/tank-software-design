@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 public class Level {
     private Player player;
-    private ArrayList<Tree> treeObstacles;
+    private ArrayList<Tree> trees;
     private ArrayList<Player> otherTanks;
 
     private int height;
@@ -20,7 +20,7 @@ public class Level {
 
     Level(Player player, ArrayList<Tree> trees, ArrayList<Player> otherTanks, int height, int width) {
         this.player = player;
-        this.treeObstacles = trees;
+        this.trees = trees;
         this.otherTanks = otherTanks;
         this.height = height;
         this.width = width;
@@ -29,18 +29,10 @@ public class Level {
 
     public Player getPlayer() { return player; }
 
-    public ArrayList<Tree> getTreeObstacles() { return treeObstacles; }
+    public ArrayList<Tree> getTreeObstacles() { return trees; }
 
     public ArrayList<Player> getOtherTanks() {
         return otherTanks;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
     }
 
     public HashSet<GridPoint2> getBorders() {
@@ -56,5 +48,23 @@ public class Level {
             borders.add(new GridPoint2(-1, y));
             borders.add(new GridPoint2(width, y));
         }
+    }
+
+    public boolean checkHasObstacle(GridPoint2 coordinates) {
+        HashSet<GridPoint2> treesCoordinates = new HashSet<GridPoint2>();
+        for (Tree tree : trees) {
+            treesCoordinates.add(tree.getCoordinates());
+        }
+        HashSet<GridPoint2> tanksCoordinates = new HashSet<GridPoint2>();
+        HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
+        for (Player tank : otherTanks) {
+            tanksCoordinates.add(tank.getCoordinates());
+            tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
+        }
+        tanksCoordinates.add(player.getCoordinates());
+        tanksDestinationCoordinates.add(player.getDestinationCoordinates());
+
+        return (treesCoordinates.contains(coordinates)) || (tanksCoordinates.contains(coordinates))
+                || (borders.contains(coordinates)) || (tanksDestinationCoordinates.contains(coordinates));
     }
 }

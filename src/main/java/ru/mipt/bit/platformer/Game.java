@@ -6,5 +6,5 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public interface Game {
-    void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders);
+    void moveOtherTanks(ArrayList<Player> otherTanks, Level level);
 }

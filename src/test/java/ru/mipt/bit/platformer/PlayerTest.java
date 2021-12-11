@@ -59,7 +59,7 @@ public class PlayerTest {
         Player player = new Player(initialPlayerCoordinates, 0f);
         Level level = new Level(player, trees, levelHeight, levelWidth);
 
-        player.move(direction, trees, otherTanks, level.getBorders());
+        player.move(direction, level);
 
         Assertions.assertEquals(player.getDestinationCoordinates(), destinationCoordinates);
         Assertions.assertEquals(player.getMovementProgress(), movementProgress);

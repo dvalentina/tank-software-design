@@ -43,13 +43,11 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     private void calculateMovement() {
         Player player = level.getPlayer();
-        ArrayList<Tree> treeObstacles = level.getTreeObstacles();
         ArrayList<Player> otherTanks = level.getOtherTanks();
-        HashSet<GridPoint2> levelBorders = level.getBorders();
 
-        movePlayerIfKeyPressed(player, treeObstacles, otherTanks, levelBorders);
-//        moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
-        gameAiAdapter.moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
+        movePlayerIfKeyPressed(player, level);
+        moveOtherTanks(otherTanks, level);
+//        gameAiAdapter.moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
 
         graphics.calculateInterpolatedPlayerScreenCoordinates();
         graphics.calculateInterpolatedOtherTanksScreenCoordinates();
@@ -60,29 +58,26 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         }
     }
 
-    private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+    private void movePlayerIfKeyPressed(Player player, Level level) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.move(Direction.UP, treeObstacles, otherTanks, levelBorders);
+            player.move(Direction.UP, level);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.move(Direction.LEFT, treeObstacles, otherTanks, levelBorders);
+            player.move(Direction.LEFT, level);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.move(Direction.DOWN, treeObstacles, otherTanks, levelBorders);
+            player.move(Direction.DOWN, level);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.move(Direction.RIGHT, treeObstacles, otherTanks, levelBorders);
+            player.move(Direction.RIGHT, level);
         }
     }
 
     @Override
-    public void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+    public void moveOtherTanks(ArrayList<Player> otherTanks, Level level) {
         for (Player tank : otherTanks) {
-            ArrayList<Player> newOtherTanks = new ArrayList<>(otherTanks);
-            newOtherTanks.remove(tank);
-            newOtherTanks.add(player);
             Direction direction = Direction.values()[new Random().nextInt(Direction.values().length)];
-            tank.move(direction, treeObstacles, newOtherTanks, levelBorders);
+            tank.move(direction, level);
         }
     }
 
