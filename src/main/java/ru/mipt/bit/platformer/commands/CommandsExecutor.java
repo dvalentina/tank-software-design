@@ -9,6 +9,12 @@ public class CommandsExecutor {
         commands.add(command);
     }
 
+    public void addCommandQueue(ArrayDeque<Command> commands) {
+        while (!commands.isEmpty()) {
+            this.commands.add(commands.pop());
+        }
+    }
+
     public void executeCommands() {
        while (!commands.isEmpty()) {
            commands.pop().execute();

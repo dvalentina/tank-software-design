@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.commands.*;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -48,8 +49,8 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         ArrayList<Player> otherTanks = level.getOtherTanks();
 
         movePlayerIfKeyPressed(player, level);
-        moveOtherTanks(otherTanks, level);
-//        gameAiAdapter.moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
+//        commandsExecutor.addCommandQueue(generateOtherTanksCommands(level));
+        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
 
         commandsExecutor.executeCommands();
 
@@ -78,21 +79,27 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     }
 
     @Override
-    public void moveOtherTanks(ArrayList<Player> otherTanks, Level level) {
-        for (Player tank : otherTanks) {
+    public ArrayDeque<Command> generateOtherTanksCommands(Level level) {
+        ArrayDeque<Command> commands = new ArrayDeque<>();
+        for (Player tank : level.getOtherTanks()) {
             Direction direction = Direction.values()[new Random().nextInt(Direction.values().length)];
-//            tank.move(direction, level);
+
             switch (direction) {
                 case UP:
-                    commandsExecutor.addCommand(new MoveUpCommand(tank, level));
+                    commands.add(new MoveUpCommand(tank, level));
+                    break;
                 case LEFT:
-                    commandsExecutor.addCommand(new MoveLeftCommand(tank, level));
+                    commands.add(new MoveLeftCommand(tank, level));
+                    break;
                 case DOWN:
-                    commandsExecutor.addCommand(new MoveDownCommand(tank, level));
+                    commands.add(new MoveDownCommand(tank, level));
+                    break;
                 case RIGHT:
-                    commandsExecutor.addCommand(new MoveRightCommand(tank, level));
+                    commands.add(new MoveRightCommand(tank, level));
+                    break;
             }
         }
+        return commands;
     }
 
     private float getTimeSinceLastRender() { return Gdx.graphics.getDeltaTime(); }
