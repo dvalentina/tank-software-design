@@ -49,13 +49,12 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         ArrayList<Player> otherTanks = level.getOtherTanks();
 
         movePlayerIfKeyPressed(player, level);
-//        commandsExecutor.addCommandQueue(generateOtherTanksCommands(level));
-        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
+        commandsExecutor.addCommandQueue(generateOtherTanksCommands(level));
+//        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
 
         commandsExecutor.executeCommands();
 
-        graphics.calculateInterpolatedPlayerScreenCoordinates();
-        graphics.calculateInterpolatedOtherTanksScreenCoordinates();
+        graphics.calculateInterpolatedObjectScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
         for (Player tank : otherTanks) {
