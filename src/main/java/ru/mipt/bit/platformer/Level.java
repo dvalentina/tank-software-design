@@ -4,10 +4,11 @@ import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class Level {
     private Player player;
-    private ArrayList<Tree> trees;
+    private List<Tree> trees;
     private ArrayList<Player> otherTanks;
 
     private int height;
@@ -29,7 +30,7 @@ public class Level {
 
     public Player getPlayer() { return player; }
 
-    public ArrayList<Tree> getTreeObstacles() { return trees; }
+    public List<Tree> getTreeObstacles() { return trees; }
 
     public ArrayList<Player> getOtherTanks() {
         return otherTanks;
@@ -51,11 +52,11 @@ public class Level {
     }
 
     public boolean checkHasObstacle(GridPoint2 coordinates) {
-        HashSet<GridPoint2> treesCoordinates = new HashSet<GridPoint2>();
+        HashSet<GridPoint2> treesCoordinates = new HashSet<>();
         for (Tree tree : trees) {
             treesCoordinates.add(tree.getCoordinates());
         }
-        HashSet<GridPoint2> tanksCoordinates = new HashSet<GridPoint2>();
+        HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
         HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
         for (Player tank : otherTanks) {
             tanksCoordinates.add(tank.getCoordinates());

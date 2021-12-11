@@ -68,7 +68,7 @@ public class GameAiAdapter implements Game{
         return (builder.build());
     }
 
-    private List<Obstacle> getAiObstacles(ArrayList<Tree> treeObstacles) {
+    private List<Obstacle> getAiObstacles(List<Tree> treeObstacles) {
         List<Obstacle> obstacles = new ArrayList<>();
         for (Tree tree : treeObstacles) {
             obstacles.add(new Obstacle(tree.getCoordinates().x, tree.getCoordinates().y));
