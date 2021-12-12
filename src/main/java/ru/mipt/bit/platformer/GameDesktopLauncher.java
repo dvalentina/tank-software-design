@@ -5,7 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
+import org.lwjgl.system.CallbackI;
+import ru.mipt.bit.platformer.commands.*;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -20,6 +23,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     private Level level;
     private Graphics graphics;
     private GameAiAdapter gameAiAdapter = new GameAiAdapter();
+    private CommandsExecutor commandsExecutor = new CommandsExecutor();
 
     @Override
     public void create() {
@@ -43,16 +47,15 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     private void calculateMovement() {
         Player player = level.getPlayer();
-        ArrayList<Tree> treeObstacles = level.getTreeObstacles();
         ArrayList<Player> otherTanks = level.getOtherTanks();
-        HashSet<GridPoint2> levelBorders = level.getBorders();
 
-        movePlayerIfKeyPressed(player, treeObstacles, otherTanks, levelBorders);
-//        moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
-        gameAiAdapter.moveOtherTanks(player, treeObstacles, otherTanks, levelBorders);
+        commandsExecutor.addCommand(InputHandler.handlePlayerInput(player, level));
+        commandsExecutor.addCommandQueue(generateOtherTanksCommands(level));
+//        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
 
-        graphics.calculateInterpolatedPlayerScreenCoordinates();
-        graphics.calculateInterpolatedOtherTanksScreenCoordinates();
+        commandsExecutor.executeCommands();
+
+        graphics.calculateInterpolatedObjectScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
         for (Player tank : otherTanks) {
@@ -60,30 +63,28 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         }
     }
 
-    private void movePlayerIfKeyPressed(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.move(Direction.UP, treeObstacles, otherTanks, levelBorders);
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.move(Direction.LEFT, treeObstacles, otherTanks, levelBorders);
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.move(Direction.DOWN, treeObstacles, otherTanks, levelBorders);
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.move(Direction.RIGHT, treeObstacles, otherTanks, levelBorders);
-        }
-    }
-
     @Override
-    public void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
-        for (Player tank : otherTanks) {
-            ArrayList<Player> newOtherTanks = new ArrayList<>(otherTanks);
-            newOtherTanks.remove(tank);
-            newOtherTanks.add(player);
+    public ArrayDeque<Command> generateOtherTanksCommands(Level level) {
+        ArrayDeque<Command> commands = new ArrayDeque<>();
+        for (Player tank : level.getOtherTanks()) {
             Direction direction = Direction.values()[new Random().nextInt(Direction.values().length)];
-            tank.move(direction, treeObstacles, newOtherTanks, levelBorders);
+
+            switch (direction) {
+                case UP:
+                    commands.add(new MoveUpCommand(tank, level));
+                    break;
+                case LEFT:
+                    commands.add(new MoveLeftCommand(tank, level));
+                    break;
+                case DOWN:
+                    commands.add(new MoveDownCommand(tank, level));
+                    break;
+                case RIGHT:
+                    commands.add(new MoveRightCommand(tank, level));
+                    break;
+            }
         }
+        return commands;
     }
 
     private float getTimeSinceLastRender() { return Gdx.graphics.getDeltaTime(); }

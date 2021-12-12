@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 public interface Movable {
     boolean isMoving();
-    void move(Direction direction, ArrayList<Tree> trees, ArrayList<Player> tanks, HashSet<GridPoint2> levelBorders);
+    void move(Direction direction, Level level);
     void continueMovement(float deltaTime, float speed);
     float getRotation();
     float getMovementProgress();

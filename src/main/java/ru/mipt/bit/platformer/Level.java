@@ -4,10 +4,11 @@ import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class Level {
     private Player player;
-    private ArrayList<Tree> treeObstacles;
+    private List<Tree> trees;
     private ArrayList<Player> otherTanks;
     private ArrayList<Bullet> bullets;
 
@@ -21,7 +22,7 @@ public class Level {
 
     Level(Player player, ArrayList<Tree> trees, ArrayList<Player> otherTanks, int height, int width) {
         this.player = player;
-        this.treeObstacles = trees;
+        this.trees = trees;
         this.otherTanks = otherTanks;
         this.height = height;
         this.width = width;
@@ -34,21 +35,13 @@ public class Level {
 
     public Player getPlayer() { return player; }
 
-    public ArrayList<Tree> getTreeObstacles() { return treeObstacles; }
+    public List<Tree> getTreeObstacles() { return trees; }
 
     public ArrayList<Player> getOtherTanks() {
         return otherTanks;
     }
 
     public ArrayList<Bullet> getBullets() { return bullets; }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
 
     public HashSet<GridPoint2> getBorders() {
         return borders;
@@ -63,5 +56,23 @@ public class Level {
             borders.add(new GridPoint2(-1, y));
             borders.add(new GridPoint2(width, y));
         }
+    }
+
+    public boolean checkHasObstacle(GridPoint2 coordinates) {
+        HashSet<GridPoint2> treesCoordinates = new HashSet<>();
+        for (Tree tree : trees) {
+            treesCoordinates.add(tree.getCoordinates());
+        }
+        HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
+        HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
+        for (Player tank : otherTanks) {
+            tanksCoordinates.add(tank.getCoordinates());
+            tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
+        }
+        tanksCoordinates.add(player.getCoordinates());
+        tanksDestinationCoordinates.add(player.getDestinationCoordinates());
+
+        return (treesCoordinates.contains(coordinates)) || (tanksCoordinates.contains(coordinates))
+                || (borders.contains(coordinates)) || (tanksDestinationCoordinates.contains(coordinates));
     }
 }

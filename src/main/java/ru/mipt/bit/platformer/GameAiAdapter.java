@@ -9,7 +9,9 @@ import org.awesome.ai.state.immovable.Obstacle;
 import org.awesome.ai.state.movable.Bot;
 import org.awesome.ai.state.movable.Orientation;
 import org.awesome.ai.strategy.NotRecommendingAI;
+import ru.mipt.bit.platformer.commands.*;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,53 +19,13 @@ import java.util.List;
 public class GameAiAdapter implements Game{
     private AI ai = new NotRecommendingAI();
 
-    @Override
-    public void moveOtherTanks(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
-        List<Recommendation> recommendations = ai.recommend(getAiGameState(player, treeObstacles, otherTanks, levelBorders));
-        for (Recommendation recommendation : recommendations) {
-            Object objectSource = recommendation.getActor().getSource();
-            if (otherTanks.contains(objectSource)) {
-                Player tank = otherTanks.get(otherTanks.indexOf(objectSource));
-                Action action = recommendation.getAction();
-                Direction direction = getDirectionFromAction(action);
-
-                ArrayList<Player> newOtherTanks = new ArrayList<>(otherTanks);
-                newOtherTanks.remove(tank);
-                newOtherTanks.add(player);
-
-                tank.move(direction, treeObstacles, newOtherTanks, levelBorders);
-            }
-        }
-    }
-
-    private Direction getDirectionFromAction(Action action) {
-        Direction direction;
-        switch (action) {
-            case MoveNorth:
-                direction = Direction.UP;
-                break;
-            case MoveWest:
-                direction = Direction.LEFT;
-                break;
-            case MoveSouth:
-                direction = Direction.DOWN;
-                break;
-            case MoveEast:
-                direction = Direction.RIGHT;
-                break;
-            default:
-                direction = Direction.RIGHT;
-        }
-        return direction;
-    }
-
-    private GameState getAiGameState(Player player, ArrayList<Tree> treeObstacles, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
+    private GameState getAiGameState(Level level) {
         GameState.GameStateBuilder builder = new GameState.GameStateBuilder()
-                .player(getAiPlayer(player))
-                .obstacles(getAiObstacles(treeObstacles))
-                .bots(getAiBots(otherTanks))
-                .levelHeight(getSizesFromBorders(levelBorders).y)
-                .levelWidth(getSizesFromBorders(levelBorders).x);
+                .player(getAiPlayer(level.getPlayer()))
+                .obstacles(getAiObstacles(level.getTreeObstacles()))
+                .bots(getAiBots(level.getOtherTanks()))
+                .levelHeight(getSizesFromBorders(level.getBorders()).y)
+                .levelWidth(getSizesFromBorders(level.getBorders()).x);
         return builder.build();
     }
 
@@ -106,7 +68,7 @@ public class GameAiAdapter implements Game{
         return (builder.build());
     }
 
-    private List<Obstacle> getAiObstacles(ArrayList<Tree> treeObstacles) {
+    private List<Obstacle> getAiObstacles(List<Tree> treeObstacles) {
         List<Obstacle> obstacles = new ArrayList<>();
         for (Tree tree : treeObstacles) {
             obstacles.add(new Obstacle(tree.getCoordinates().x, tree.getCoordinates().y));
@@ -127,5 +89,36 @@ public class GameAiAdapter implements Game{
             bots.add(builder.build());
         }
         return bots;
+    }
+
+    @Override
+    public ArrayDeque<Command> generateOtherTanksCommands(Level level) {
+        ArrayDeque<Command> commands = new ArrayDeque<>();
+        ArrayList<Player> otherTanks = level.getOtherTanks();
+
+        List<Recommendation> recommendations = ai.recommend(getAiGameState(level));
+        for (Recommendation recommendation : recommendations) {
+            Object objectSource = recommendation.getActor().getSource();
+            if (otherTanks.contains(objectSource)) {
+                Player tank = otherTanks.get(otherTanks.indexOf(objectSource));
+                Action action = recommendation.getAction();
+
+                switch (action) {
+                    case MoveNorth:
+                        commands.add(new MoveUpCommand(tank, level));
+                        break;
+                    case MoveWest:
+                        commands.add(new MoveLeftCommand(tank, level));
+                        break;
+                    case MoveSouth:
+                        commands.add(new MoveDownCommand(tank, level));
+                        break;
+                    case MoveEast:
+                        commands.add(new MoveRightCommand(tank, level));
+                        break;
+                }
+            }
+        }
+        return commands;
     }
 }

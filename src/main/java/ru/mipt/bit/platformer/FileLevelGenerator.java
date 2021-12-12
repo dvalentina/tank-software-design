@@ -2,18 +2,13 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-import java.awt.*;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class FileLevelGenerator implements LevelGenerator{
-    private ArrayList<ArrayList<Character>> levelArray = new ArrayList<>();
     private String filePath;
-    private Player player;
-    private ArrayList<Tree> trees = new ArrayList<Tree>();
 
     public FileLevelGenerator(String path) {
         filePath = path;
@@ -21,14 +16,13 @@ public class FileLevelGenerator implements LevelGenerator{
 
     @Override
     public Level generateLevel() {
-        readLevelFromFile();
-        createLevelFromArray();
-        final int height = levelArray.size();
-        final int width = levelArray.get(0).size();
-        return new Level(player, trees, height, width);
+        ArrayList<ArrayList<Character>> levelArray = readLevelFromFile();
+        return createLevelFromArray(levelArray);
     }
 
-    private void createLevelFromArray() {
+    private Level createLevelFromArray(ArrayList<ArrayList<Character>> levelArray) {
+        Player player = new Player(new GridPoint2(0, 0), 0f);
+        ArrayList<Tree> trees = new ArrayList<>();
         for (int i = 0; i < levelArray.size(); i++) {
             for (int j = 0; j < levelArray.get(i).size(); j++) {
                 char symbol = levelArray.get(i).get(j);
@@ -40,14 +34,18 @@ public class FileLevelGenerator implements LevelGenerator{
                 }
             }
         }
+        final int height = levelArray.size();
+        final int width = levelArray.get(0).size();
+        return new Level(player, trees, height, width);
     }
 
-    private void readLevelFromFile() {
+    private ArrayList<ArrayList<Character>> readLevelFromFile() {
+        ArrayList<ArrayList<Character>> levelArray = new ArrayList<>();
         try (FileInputStream fin = new FileInputStream(filePath))
         {
             int character = fin.read();
             while ( character != -1 ){
-                ArrayList<Character> row = new ArrayList<Character>();
+                ArrayList<Character> row = new ArrayList<>();
                 while ( ((char)character != '\n') && (character != -1) ) {
                     row.add((char)character);
                     character = fin.read();
@@ -60,5 +58,6 @@ public class FileLevelGenerator implements LevelGenerator{
         catch(IOException ex){
             System.out.println(ex.getMessage());
         }
+        return levelArray;
     }
 }

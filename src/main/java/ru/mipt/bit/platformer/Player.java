@@ -30,23 +30,11 @@ public class Player implements Movable {
     }
 
     @Override
-    public void move(Direction direction, ArrayList<Tree> trees, ArrayList<Player> otherTanks, HashSet<GridPoint2> levelBorders) {
-        HashSet<GridPoint2> treesCoordinates = new HashSet<>();
-        for (Tree tree : trees) {
-            treesCoordinates.add(tree.getCoordinates());
-        }
-        HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
-        HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
-        for (Player tank : otherTanks) {
-            tanksCoordinates.add(tank.getCoordinates());
-            tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
-        }
-
+    public void move(Direction direction, Level level) {
         if (isMoving()) {
             // check potential player destination for collision with obstacles
             GridPoint2 newCoordinates = new GridPoint2(coordinates).add(direction.getMovementVector());
-            if ( (!treesCoordinates.contains(newCoordinates)) && (!tanksCoordinates.contains(newCoordinates))
-            && (!levelBorders.contains(newCoordinates)) && (!tanksDestinationCoordinates.contains(newCoordinates)) ) {
+            if (!level.checkHasObstacle(newCoordinates)) {
                 destinationCoordinates = newCoordinates;
                 movementProgress = 0f;
             }
