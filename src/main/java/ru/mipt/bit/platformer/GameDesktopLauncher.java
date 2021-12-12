@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
+import org.lwjgl.system.CallbackI;
 import ru.mipt.bit.platformer.commands.*;
 
 import java.util.ArrayDeque;
@@ -48,7 +49,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         Player player = level.getPlayer();
         ArrayList<Player> otherTanks = level.getOtherTanks();
 
-        movePlayerIfKeyPressed(player, level);
+        commandsExecutor.addCommand(InputHandler.handlePlayerInput(player, level));
         commandsExecutor.addCommandQueue(generateOtherTanksCommands(level));
 //        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
 
@@ -59,21 +60,6 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
         for (Player tank : otherTanks) {
             tank.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
-        }
-    }
-
-    private void movePlayerIfKeyPressed(Player player, Level level) {
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            commandsExecutor.addCommand(new MoveUpCommand(player, level));
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            commandsExecutor.addCommand(new MoveLeftCommand(player, level));
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            commandsExecutor.addCommand(new MoveDownCommand(player, level));
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            commandsExecutor.addCommand(new MoveRightCommand(player, level));
         }
     }
 
