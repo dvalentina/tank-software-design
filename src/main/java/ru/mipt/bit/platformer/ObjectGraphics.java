@@ -12,7 +12,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled
 
 public class ObjectGraphics {
     private final TextureRegion graphics;
-    private Object source;
+    private final Object source;
 
     public Rectangle getRectangle() {
         return rectangle;

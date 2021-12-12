@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.events.EventManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,7 +11,7 @@ public class RandomLevelGenerator implements LevelGenerator{
     final int levelHeight = 8;
 
     @Override
-    public Level generateLevel() {
+    public Level generateLevel(EventManager events) {
         HashSet<GridPoint2> treesCoordinates = generateTreesCoordinates();
         HashSet<GridPoint2> tanksCoordinates = generateTanksCoordinates(treesCoordinates);
         GridPoint2 playerCoordinates = generatePlayerCoordinates(treesCoordinates, tanksCoordinates);
@@ -25,7 +26,7 @@ public class RandomLevelGenerator implements LevelGenerator{
         }
         Player player = new Player(playerCoordinates, 0f);
 
-        return new Level(player, trees, tanks, levelHeight, levelWidth);
+        return new Level(player, trees, tanks, levelHeight, levelWidth, events);
     }
 
     private HashSet<GridPoint2> generateTreesCoordinates() {

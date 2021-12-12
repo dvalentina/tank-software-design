@@ -43,7 +43,7 @@ public class Player implements Movable {
     }
 
     public void shoot(Level level) {
-        Bullet bullet = new Bullet(new GridPoint2(coordinates).add(getVectorFromRotation()), rotation);
+        Bullet bullet = new Bullet(new GridPoint2(destinationCoordinates).add(getVectorFromRotation()), rotation);
         level.addBullet(bullet);
         // shoot
     }

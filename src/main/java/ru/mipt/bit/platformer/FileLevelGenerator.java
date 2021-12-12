@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.events.EventManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,12 +16,12 @@ public class FileLevelGenerator implements LevelGenerator{
     }
 
     @Override
-    public Level generateLevel() {
+    public Level generateLevel(EventManager events) {
         ArrayList<ArrayList<Character>> levelArray = readLevelFromFile();
-        return createLevelFromArray(levelArray);
+        return createLevelFromArray(levelArray, events);
     }
 
-    private Level createLevelFromArray(ArrayList<ArrayList<Character>> levelArray) {
+    private Level createLevelFromArray(ArrayList<ArrayList<Character>> levelArray, EventManager events) {
         Player player = new Player(new GridPoint2(0, 0), 0f);
         ArrayList<Tree> trees = new ArrayList<>();
         for (int i = 0; i < levelArray.size(); i++) {
@@ -36,7 +37,7 @@ public class FileLevelGenerator implements LevelGenerator{
         }
         final int height = levelArray.size();
         final int width = levelArray.get(0).size();
-        return new Level(player, trees, height, width);
+        return new Level(player, trees, height, width, events);
     }
 
     private ArrayList<ArrayList<Character>> readLevelFromFile() {

@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer;
 
+import ru.mipt.bit.platformer.events.EventManager;
+
 public interface LevelGenerator {
-    Level generateLevel();
+    Level generateLevel(EventManager events);
 }

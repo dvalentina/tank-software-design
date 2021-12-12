@@ -1,12 +1,16 @@
 package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.events.EventManager;
+import ru.mipt.bit.platformer.events.EventTypes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 public class Level {
+    public final EventManager events;
+
     private Player player;
     private List<Tree> trees;
     private ArrayList<Player> otherTanks;
@@ -16,21 +20,23 @@ public class Level {
     private int width;
     private HashSet<GridPoint2> borders = new HashSet<>();
 
-    Level(Player player, ArrayList<Tree> trees, int height, int width) {
-        this(player, trees, null, height, width);
+    Level(Player player, ArrayList<Tree> trees, int height, int width, EventManager events) {
+        this(player, trees, null, height, width, events);
     }
 
-    Level(Player player, ArrayList<Tree> trees, ArrayList<Player> otherTanks, int height, int width) {
+    Level(Player player, ArrayList<Tree> trees, ArrayList<Player> otherTanks, int height, int width, EventManager events) {
         this.player = player;
         this.trees = trees;
         this.otherTanks = otherTanks;
         this.height = height;
         this.width = width;
+        this.events = events;
         createBordersCoordinates();
     }
 
     public void addBullet(Bullet bullet) {
         bullets.add(bullet);
+        events.notify(EventTypes.BULLET_ADDED);
     }
 
     public Player getPlayer() { return player; }

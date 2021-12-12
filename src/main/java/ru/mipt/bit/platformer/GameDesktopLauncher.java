@@ -7,6 +7,9 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
 import org.lwjgl.system.CallbackI;
 import ru.mipt.bit.platformer.commands.*;
+import ru.mipt.bit.platformer.events.BulletAddedListener;
+import ru.mipt.bit.platformer.events.EventManager;
+import ru.mipt.bit.platformer.events.EventTypes;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -25,12 +28,18 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     private GameAiAdapter gameAiAdapter = new GameAiAdapter();
     private CommandsExecutor commandsExecutor = new CommandsExecutor();
 
+    private EventManager events;
+    private BulletAddedListener bulletAddedListener;
+
     @Override
     public void create() {
+        events = new EventManager();
         LevelGenerator levelGenerator = new RandomLevelGenerator();
 //        LevelGenerator levelGenerator = new FileLevelGenerator("src/test/resources/testLevel");
-        level = levelGenerator.generateLevel();
+        level = levelGenerator.generateLevel(events);
         graphics = new Graphics(level);
+        bulletAddedListener = new BulletAddedListener(graphics);
+        events.subscribe(EventTypes.BULLET_ADDED, bulletAddedListener);
     }
 
     @Override
