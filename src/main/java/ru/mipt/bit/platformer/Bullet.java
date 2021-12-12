@@ -26,27 +26,16 @@ public class Bullet implements Movable {
     }
 
     @Override
-    public void move(Direction direction, ArrayList<Tree> trees, ArrayList<Player> tanks, HashSet<GridPoint2> levelBorders) {
-        HashSet<GridPoint2> treesCoordinates = new HashSet<>();
-        for (Tree tree : trees) {
-            treesCoordinates.add(tree.getCoordinates());
-        }
-        HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
-        HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
-        for (Player tank : tanks) {
-            tanksCoordinates.add(tank.getCoordinates());
-            tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
-        }
-
+    public void move(Direction direction, Level level) {
         if (isMoving()) {
             GridPoint2 newCoordinates = new GridPoint2(coordinates).add(direction.getMovementVector());
-            if ( (!treesCoordinates.contains(newCoordinates)) && (!levelBorders.contains(newCoordinates)) ) {
+            if (!level.checkHasObstacle(newCoordinates)) {
                 destinationCoordinates = newCoordinates;
                 movementProgress = 0f;
             }
-            if ((tanksCoordinates.contains(newCoordinates)) && (tanksDestinationCoordinates.contains(newCoordinates))) {
-                // deal damage
-            }
+//            if ((tanksCoordinates.contains(newCoordinates)) && (tanksDestinationCoordinates.contains(newCoordinates))) {
+//                // deal damage
+//            }
             rotation = direction.getRotation();
         }
     }

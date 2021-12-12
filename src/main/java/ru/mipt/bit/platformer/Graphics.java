@@ -27,13 +27,13 @@ public class Graphics implements Disposable {
             otherTanksGraphics.add(new ObjectGraphics(textures.get("blueTank"), tank));
         }
         levelGraphics = new LevelGraphics(level);
-
         levelGraphics.loadLevelTiles(batch);
     }
 
     private HashMap<String,Texture> loadTextures() {
         HashMap<String,Texture> textures = new HashMap<>();
         textures.put("blueTank", new Texture("images/tank_blue.png"));
+        textures.put("bullet", new Texture("images/bullet.png"));
         return textures;
     }
 

@@ -10,7 +10,7 @@ public class Level {
     private Player player;
     private List<Tree> trees;
     private ArrayList<Player> otherTanks;
-    private ArrayList<Bullet> bullets;
+    private ArrayList<Bullet> bullets = new ArrayList<>();
 
     private int height;
     private int width;
