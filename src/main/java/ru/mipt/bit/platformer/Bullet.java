@@ -13,23 +13,15 @@ public class Bullet implements Movable {
     private GridPoint2 destinationCoordinates;
     private float movementProgress = 1f;
     private float rotation;
+    private final Player tank;
 
     final int damage = 2;
 
-    Bullet(GridPoint2 tankCoordinates, float rotation, Level level) {
-        this.rotation = rotation;
-        this.destinationCoordinates = new GridPoint2(tankCoordinates).add(getDirectionFromRotation().getMovementVector());
+    Bullet(Player tank, Level level) {
+        this.tank = tank;
+        this.rotation = tank.getRotation();
+        this.destinationCoordinates = new GridPoint2(tank.getDestinationCoordinates()).add(Direction.getMovementVectorFromRotation(rotation));
         this.coordinates = new GridPoint2(this.destinationCoordinates);
-    }
-
-    private Direction getDirectionFromRotation() {
-        Direction direction = Direction.RIGHT;
-        for (Direction dir : Direction.values()) {
-            if (dir.getRotation() == rotation) {
-                direction = dir;
-            }
-        }
-        return direction;
     }
 
     @Override
@@ -38,13 +30,14 @@ public class Bullet implements Movable {
     }
 
     public void moveFurther(Level level) {
-        move(getDirectionFromRotation(), level);
+        move(Direction.getDirectionFromRotation(rotation), level);
     }
 
     @Override
     public void move(Direction direction, Level level) {
         if (level.checkHasObstacle(coordinates)) {
             level.removeBullet(this);
+            this.tank.removeBullet(this);
         }
         if (level.checkHasTank(coordinates) != null) {
             Player tank = level.checkHasTank(coordinates);
@@ -58,6 +51,7 @@ public class Bullet implements Movable {
                 movementProgress = 0f;
             } else {
                 level.removeBullet(this);
+                this.tank.removeBullet(this);
             }
 
             if (level.checkHasTank(newCoordinates) != null) {

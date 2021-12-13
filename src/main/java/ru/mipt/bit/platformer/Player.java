@@ -2,6 +2,8 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
 
+import java.util.ArrayList;
+
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
@@ -12,6 +14,8 @@ public class Player implements Movable {
     private GridPoint2 destinationCoordinates;
     private float movementProgress = 1f;
     private float rotation;
+
+    private final ArrayList<Bullet> bullets = new ArrayList<>();
 
     private int healthPoints = 3;
 
@@ -40,9 +44,20 @@ public class Player implements Movable {
     }
 
     public void shoot(Level level) {
-        Bullet bullet = new Bullet(new GridPoint2(destinationCoordinates), rotation, level);
-        level.addBullet(bullet);
-        // shoot
+        if (!didShootRecently()) {
+            Bullet bullet = new Bullet(this, level);
+            level.addBullet(bullet);
+            bullets.add(bullet);
+        }
+    }
+
+    private boolean didShootRecently() {
+        for (Bullet bullet : bullets) {
+            if (bullet.getCoordinates().equals(new GridPoint2(destinationCoordinates).add(Direction.getMovementVectorFromRotation(rotation)))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -60,6 +75,10 @@ public class Player implements Movable {
 
     public int getHealthPoints() {
         return healthPoints;
+    }
+
+    public void removeBullet(Bullet bullet) {
+        bullets.remove(bullet);
     }
 
     @Override

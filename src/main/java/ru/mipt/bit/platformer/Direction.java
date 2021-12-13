@@ -23,4 +23,24 @@ public enum Direction {
     public float getRotation() {
         return rotation;
     }
+
+    public static Direction getDirectionFromRotation(float rotation) {
+        Direction direction = Direction.RIGHT;
+        for (Direction dir : Direction.values()) {
+            if (dir.getRotation() == rotation) {
+                direction = dir;
+            }
+        }
+        return direction;
+    }
+
+    public static GridPoint2 getMovementVectorFromRotation(float rotation) {
+        Direction direction = Direction.RIGHT;
+        for (Direction dir : Direction.values()) {
+            if (dir.getRotation() == rotation) {
+                direction = dir;
+            }
+        }
+        return direction.getMovementVector();
+    }
 }
