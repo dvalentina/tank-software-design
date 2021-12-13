@@ -65,6 +65,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
             commandsExecutor.addCommand(new MoveBulletCommand(bullet, level));
         }
 //        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
+        commandsExecutor.addCommand(InputHandler.handleOtherInput(graphics));
 
         commandsExecutor.executeCommands();
         level.checkTanksHealthPoints();

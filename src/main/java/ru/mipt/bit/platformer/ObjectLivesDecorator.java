@@ -14,6 +14,10 @@ public class ObjectLivesDecorator implements ObjectGraphicsInterface{
         this.objectGraphics = objectGraphics;
     }
 
+    public ObjectGraphics getObjectGraphics() {
+        return objectGraphics;
+    }
+
     @Override
     public TextureRegion getGraphics() {
         return objectGraphics.getGraphics();

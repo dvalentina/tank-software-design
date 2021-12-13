@@ -25,4 +25,11 @@ public class InputHandler {
         }
         return new DoNothingCommand();
     }
+
+    public static Command handleOtherInput(Graphics graphics) {
+        if (Gdx.input.isKeyJustPressed(L)) {
+            return new ToggleLivesCommand(graphics);
+        }
+        return new DoNothingCommand();
+    }
 }

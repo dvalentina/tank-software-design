@@ -19,8 +19,9 @@ public class Graphics implements Disposable {
     private final Level level;
     private final LevelGraphics levelGraphics;
     private final ObjectGraphicsInterface playerGraphics;
-    private final ArrayList<ObjectGraphicsInterface> otherTanksGraphics = new ArrayList<>();
+    private ArrayList<ObjectGraphicsInterface> otherTanksGraphics = new ArrayList<>();
     private final ArrayList<ObjectGraphics> bulletsGraphics = new ArrayList<>();
+    boolean isDrawingLives = false;
 
     public Graphics(Level level) {
         this.level = level;
@@ -28,11 +29,25 @@ public class Graphics implements Disposable {
         textures = loadTextures();
         playerGraphics = new ObjectGraphics(textures.get("blueTank"), level.getPlayer());
         for (Player tank : level.getOtherTanks()) {
-            ObjectGraphics otherTankGraphics = new ObjectGraphics(textures.get("blueTank"), tank);
-            otherTanksGraphics.add(new ObjectLivesDecorator(otherTankGraphics));
+            otherTanksGraphics.add(new ObjectGraphics(textures.get("blueTank"), tank));
         }
         levelGraphics = new LevelGraphics(level);
         levelGraphics.loadLevelTiles(batch);
+    }
+
+    public void toggleDrawingLives() {
+        ArrayList<ObjectGraphicsInterface> newOtherTanksGraphics = new ArrayList<>();
+        if (isDrawingLives) {
+            for (int i = 0; i < otherTanksGraphics.size(); i++) {
+                newOtherTanksGraphics.add(i, ((ObjectLivesDecorator)otherTanksGraphics.get(i)).getObjectGraphics());
+            }
+        } else {
+            for (int i = 0; i < otherTanksGraphics.size(); i++) {
+                newOtherTanksGraphics.add(i, new ObjectLivesDecorator((ObjectGraphics) otherTanksGraphics.get(i)));
+            }
+        }
+        otherTanksGraphics = newOtherTanksGraphics;
+        isDrawingLives = !isDrawingLives;
     }
 
     private HashMap<String,Texture> loadTextures() {
