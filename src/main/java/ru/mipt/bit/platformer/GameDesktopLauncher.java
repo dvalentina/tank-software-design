@@ -4,14 +4,11 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.math.GridPoint2;
-import org.lwjgl.system.CallbackI;
 import ru.mipt.bit.platformer.commands.*;
 import ru.mipt.bit.platformer.events.*;
 
 import java.util.*;
 
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameDesktopLauncher implements ApplicationListener, Game {
@@ -46,6 +43,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     @Override
     public void render() {
         clearScreen();
+        createCommands();
         calculateMovement();
         graphics.render();
     }
@@ -55,9 +53,8 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    private void calculateMovement() {
+    private void createCommands() {
         Player player = level.getPlayer();
-        List<Player> otherTanks = level.getOtherTanks();
         List<Bullet> bullets = level.getBullets();
 
         commandsExecutor.addCommand(InputHandler.handlePlayerInput(player, level));
@@ -69,6 +66,13 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
         commandsExecutor.executeCommands();
         level.checkTanksHealthPoints();
+    }
+
+    private void calculateMovement() {
+        Player player = level.getPlayer();
+        List<Player> otherTanks = level.getOtherTanks();
+        List<Bullet> bullets = level.getBullets();
+
         graphics.calculateInterpolatedObjectScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
@@ -84,19 +88,22 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     public ArrayDeque<Command> generateOtherTanksCommands(Level level) {
         ArrayDeque<Command> commands = new ArrayDeque<>();
         for (Player tank : level.getOtherTanks()) {
-            Direction direction = Direction.values()[new Random().nextInt(Direction.values().length)];
+            final int variant = new Random().nextInt(Direction.values().length + 1);
 
-            switch (direction) {
-                case UP:
+            switch (variant) {
+                case 0:
+                    commands.add(new ShootCommand(tank, level));
+                    break;
+                case 1:
                     commands.add(new MoveUpCommand(tank, level));
                     break;
-                case LEFT:
+                case 2:
                     commands.add(new MoveLeftCommand(tank, level));
                     break;
-                case DOWN:
+                case 3:
                     commands.add(new MoveDownCommand(tank, level));
                     break;
-                case RIGHT:
+                case 4:
                     commands.add(new MoveRightCommand(tank, level));
                     break;
             }
