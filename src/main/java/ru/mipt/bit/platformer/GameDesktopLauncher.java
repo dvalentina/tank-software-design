@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import ru.mipt.bit.platformer.commands.*;
 import ru.mipt.bit.platformer.events.*;
 
@@ -17,6 +18,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     private Level level;
     private Graphics graphics;
+
     private GameAiAdapter gameAiAdapter = new GameAiAdapter();
     private final CommandsExecutor commandsExecutor = new CommandsExecutor();
 

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Player implements Movable {
+public class Player implements Movable, Killable {
     private State state;
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private GridPoint2 coordinates;
@@ -18,7 +18,8 @@ public class Player implements Movable {
 
     private final ArrayList<Bullet> bullets = new ArrayList<>();
 
-    private int healthPoints = 5;
+    private final int maxLives = 5;
+    private int healthPoints = maxLives;
 
     Player(GridPoint2 initialCoordinates, float rotation) {
         this.destinationCoordinates = initialCoordinates;
@@ -62,6 +63,7 @@ public class Player implements Movable {
         state.continueMovement(deltaTime, speed);
     }
 
+    @Override
     public void takeDamage(int damage) {
         healthPoints -= damage;
         if ((healthPoints > 1) && (healthPoints <= 3)) {
@@ -71,8 +73,14 @@ public class Player implements Movable {
         }
     }
 
+    @Override
     public int getHealthPoints() {
         return healthPoints;
+    }
+
+    @Override
+    public int getMaxLives() {
+        return maxLives;
     }
 
     public void removeBullet(Bullet bullet) {

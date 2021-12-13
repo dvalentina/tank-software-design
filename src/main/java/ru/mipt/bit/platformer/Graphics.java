@@ -3,6 +3,7 @@ package ru.mipt.bit.platformer;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -13,11 +14,12 @@ import java.util.List;
 
 public class Graphics implements Disposable {
     private final Batch batch;
+    private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final HashMap<String, Texture> textures;
     private final Level level;
     private final LevelGraphics levelGraphics;
-    private final ObjectGraphics playerGraphics;
-    private final ArrayList<ObjectGraphics> otherTanksGraphics = new ArrayList<>();
+    private final ObjectGraphicsInterface playerGraphics;
+    private final ArrayList<ObjectGraphicsInterface> otherTanksGraphics = new ArrayList<>();
     private final ArrayList<ObjectGraphics> bulletsGraphics = new ArrayList<>();
 
     public Graphics(Level level) {
@@ -26,7 +28,8 @@ public class Graphics implements Disposable {
         textures = loadTextures();
         playerGraphics = new ObjectGraphics(textures.get("blueTank"), level.getPlayer());
         for (Player tank : level.getOtherTanks()) {
-            otherTanksGraphics.add(new ObjectGraphics(textures.get("blueTank"), tank));
+            ObjectGraphics otherTankGraphics = new ObjectGraphics(textures.get("blueTank"), tank);
+            otherTanksGraphics.add(new ObjectLivesDecorator(otherTankGraphics));
         }
         levelGraphics = new LevelGraphics(level);
         levelGraphics.loadLevelTiles(batch);
@@ -52,12 +55,18 @@ public class Graphics implements Disposable {
             bulletsGraphics.get(i).render(batch, level.getBullets().get(i).getRotation());
         }
         batch.end();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (ObjectGraphicsInterface otherTanksGraphic : otherTanksGraphics) {
+            otherTanksGraphic.renderShape(shapeRenderer);
+        }
+        shapeRenderer.end();
     }
 
     public void calculateInterpolatedObjectScreenCoordinates() {
         TileMovement tileMovement = levelGraphics.getTileMovement();
         playerGraphics.calculateInterpolatedObjectScreenCoordinates(tileMovement);
-        for (ObjectGraphics tankGraphics : otherTanksGraphics) {
+        for (ObjectGraphicsInterface tankGraphics : otherTanksGraphics) {
             tankGraphics.calculateInterpolatedObjectScreenCoordinates(tileMovement);
         }
         for (ObjectGraphics bulletsGraphics : bulletsGraphics) {
