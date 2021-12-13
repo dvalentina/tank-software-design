@@ -18,7 +18,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     private Level level;
     private Graphics graphics;
     private GameAiAdapter gameAiAdapter = new GameAiAdapter();
-    private CommandsExecutor commandsExecutor = new CommandsExecutor();
+    private final CommandsExecutor commandsExecutor = new CommandsExecutor();
 
     private EventManager events;
     private BulletAddedListener bulletAddedListener;

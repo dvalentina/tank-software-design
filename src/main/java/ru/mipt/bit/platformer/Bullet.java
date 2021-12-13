@@ -16,7 +16,7 @@ public class Bullet implements Movable {
 
     final int damage = 2;
 
-    Bullet(GridPoint2 tankCoordinates, float rotation) {
+    Bullet(GridPoint2 tankCoordinates, float rotation, Level level) {
         this.rotation = rotation;
         this.destinationCoordinates = new GridPoint2(tankCoordinates).add(getDirectionFromRotation().getMovementVector());
         this.coordinates = new GridPoint2(this.destinationCoordinates);
@@ -43,6 +43,14 @@ public class Bullet implements Movable {
 
     @Override
     public void move(Direction direction, Level level) {
+        if (level.checkHasObstacle(coordinates)) {
+            level.removeBullet(this);
+        }
+        if (level.checkHasTank(coordinates) != null) {
+            Player tank = level.checkHasTank(coordinates);
+            tank.takeDamage(damage);
+        }
+
         if (isMoving()) {
             GridPoint2 newCoordinates = new GridPoint2(coordinates).add(direction.getMovementVector());
             if (!level.checkHasObstacle(newCoordinates)) {
