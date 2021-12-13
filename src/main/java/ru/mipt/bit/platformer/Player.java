@@ -8,6 +8,7 @@ import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Player implements Movable {
+    private State state;
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private GridPoint2 coordinates;
     // which tile the player want to go next
@@ -17,12 +18,17 @@ public class Player implements Movable {
 
     private final ArrayList<Bullet> bullets = new ArrayList<>();
 
-    private int healthPoints = 3;
+    private int healthPoints = 5;
 
     Player(GridPoint2 initialCoordinates, float rotation) {
         this.destinationCoordinates = initialCoordinates;
         this.coordinates = new GridPoint2(this.destinationCoordinates);
         this.rotation = rotation;
+        this.state = new LightState();
+    }
+
+    private void changeState(State newState) {
+        this.state = newState;
     }
 
     @Override
@@ -44,33 +50,25 @@ public class Player implements Movable {
     }
 
     public void shoot(Level level) {
-        if (!didShootRecently()) {
+        if (state.canShoot()) {
             Bullet bullet = new Bullet(this, level);
             level.addBullet(bullet);
             bullets.add(bullet);
         }
     }
 
-    private boolean didShootRecently() {
-        for (Bullet bullet : bullets) {
-            if (bullet.getCoordinates().equals(new GridPoint2(destinationCoordinates).add(Direction.getMovementVectorFromRotation(rotation)))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void continueMovement(float deltaTime, float speed) {
-        movementProgress = continueProgress(movementProgress, deltaTime, speed);
-        if (isMoving()) {
-            // record that the player has reached his/her destination
-            coordinates = destinationCoordinates;
-        }
+        state.continueMovement(deltaTime, speed);
     }
 
     public void takeDamage(int damage) {
         healthPoints -= damage;
+        if ((healthPoints > 1) && (healthPoints <= 3)) {
+            changeState(new MediumState());
+        } else if (healthPoints <= 1) {
+            changeState(new HeavyState());
+        }
     }
 
     public int getHealthPoints() {
@@ -97,5 +95,67 @@ public class Player implements Movable {
     @Override
     public GridPoint2 getDestinationCoordinates() {
         return this.destinationCoordinates;
+    }
+
+    private class LightState implements State {
+        @Override
+        public void continueMovement(float deltaTime, float speed) {
+            movementProgress = continueProgress(movementProgress, deltaTime, speed);
+            if (isMoving()) {
+                // record that the player has reached his/her destination
+                coordinates = destinationCoordinates;
+            }
+        }
+
+        @Override
+        public boolean canShoot() {
+            for (Bullet bullet : bullets) {
+                if (bullet.getCoordinates().equals(new GridPoint2(destinationCoordinates).add(Direction.getMovementVectorFromRotation(rotation)))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private class MediumState implements State {
+        @Override
+        public void continueMovement(float deltaTime, float speed) {
+            // moves 2 times slower
+            final float slowerSpeed = speed * 2;
+            movementProgress = continueProgress(movementProgress, deltaTime, slowerSpeed);
+            if (isMoving()) {
+                // record that the player has reached his/her destination
+                coordinates = destinationCoordinates;
+            }
+        }
+
+        @Override
+        public boolean canShoot() {
+            for (Bullet bullet : bullets) {
+                if (bullet.getCoordinates().equals(new GridPoint2(destinationCoordinates).add(Direction.getMovementVectorFromRotation(rotation)))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private class HeavyState implements State {
+        @Override
+        public void continueMovement(float deltaTime, float speed) {
+            // moves 3 times slower
+            final float slowerSpeed = speed * 3;
+            movementProgress = continueProgress(movementProgress, deltaTime, slowerSpeed);
+            if (isMoving()) {
+                // record that the player has reached his/her destination
+                coordinates = destinationCoordinates;
+            }
+        }
+
+        @Override
+        public boolean canShoot() {
+            return false;
+        }
     }
 }
