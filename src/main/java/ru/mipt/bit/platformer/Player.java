@@ -43,19 +43,9 @@ public class Player implements Movable {
     }
 
     public void shoot(Level level) {
-        Bullet bullet = new Bullet(new GridPoint2(destinationCoordinates).add(getVectorFromRotation()), rotation);
+        Bullet bullet = new Bullet(new GridPoint2(destinationCoordinates), rotation);
         level.addBullet(bullet);
         // shoot
-    }
-
-    private GridPoint2 getVectorFromRotation() {
-        GridPoint2 vector = new GridPoint2(0, 0);
-        for (Direction direction : Direction.values()) {
-            if (direction.getRotation() == rotation) {
-                vector = direction.getMovementVector();
-            }
-        }
-        return vector;
     }
 
     @Override

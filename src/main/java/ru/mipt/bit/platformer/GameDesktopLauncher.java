@@ -8,13 +8,11 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.lwjgl.system.CallbackI;
 import ru.mipt.bit.platformer.commands.*;
 import ru.mipt.bit.platformer.events.BulletAddedListener;
+import ru.mipt.bit.platformer.events.BulletRemovedListener;
 import ru.mipt.bit.platformer.events.EventManager;
 import ru.mipt.bit.platformer.events.EventTypes;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -30,6 +28,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     private EventManager events;
     private BulletAddedListener bulletAddedListener;
+    private BulletRemovedListener bulletRemovedListener;
 
     @Override
     public void create() {
@@ -39,7 +38,9 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         level = levelGenerator.generateLevel(events);
         graphics = new Graphics(level);
         bulletAddedListener = new BulletAddedListener(graphics);
+        bulletRemovedListener = new BulletRemovedListener(graphics);
         events.subscribe(EventTypes.BULLET_ADDED, bulletAddedListener);
+        events.subscribe(EventTypes.BULLET_REMOVED, bulletRemovedListener);
     }
 
     @Override
@@ -56,10 +57,14 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 
     private void calculateMovement() {
         Player player = level.getPlayer();
-        ArrayList<Player> otherTanks = level.getOtherTanks();
+        List<Player> otherTanks = level.getOtherTanks();
+        List<Bullet> bullets = level.getBullets();
 
         commandsExecutor.addCommand(InputHandler.handlePlayerInput(player, level));
         commandsExecutor.addCommandQueue(generateOtherTanksCommands(level));
+        for (Bullet bullet : bullets) {
+            commandsExecutor.addCommand(new MoveBulletCommand(bullet, level));
+        }
 //        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
 
         commandsExecutor.executeCommands();
@@ -69,6 +74,9 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
         for (Player tank : otherTanks) {
             tank.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
+        }
+        for (Bullet bullet : bullets) {
+            bullet.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
         }
     }
 

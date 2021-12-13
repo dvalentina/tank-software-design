@@ -2,15 +2,15 @@ package ru.mipt.bit.platformer.events;
 
 import ru.mipt.bit.platformer.Graphics;
 
-public class BulletAddedListener implements EventListener {
+public class BulletRemovedListener implements EventListener {
     private final Graphics graphics;
 
-    public BulletAddedListener(Graphics graphics) {
+    public BulletRemovedListener(Graphics graphics) {
         this.graphics = graphics;
     }
 
     @Override
     public void update() {
-        graphics.addBullet();
+        graphics.removeBullet();
     }
 }

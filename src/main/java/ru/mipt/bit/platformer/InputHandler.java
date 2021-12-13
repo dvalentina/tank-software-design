@@ -20,7 +20,7 @@ public class InputHandler {
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
             return new MoveRightCommand(player, level);
         }
-        if (Gdx.input.isKeyPressed(SPACE)) {
+        if (Gdx.input.isKeyJustPressed(SPACE)) {
             return new ShootCommand(player, level);
         }
         return new DoNothingCommand();

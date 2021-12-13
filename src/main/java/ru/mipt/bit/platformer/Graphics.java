@@ -76,4 +76,9 @@ public class Graphics implements Disposable {
         List<Bullet> bullets = level.getBullets();
         bulletsGraphics.add(new ObjectGraphics(textures.get("bullet"), bullets.get(bullets.size()-1)));
     }
+
+    public void removeBullet() {
+        List<Bullet> bullets = level.getBullets();
+        bulletsGraphics.removeIf(bulletGraphics -> !bullets.contains(bulletGraphics.getSource()));
+    }
 }

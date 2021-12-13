@@ -39,6 +39,11 @@ public class Level {
         events.notify(EventTypes.BULLET_ADDED);
     }
 
+    public void removeBullet(Bullet bullet) {
+        bullets.remove(bullet);
+        events.notify(EventTypes.BULLET_REMOVED);
+    }
+
     public Player getPlayer() { return player; }
 
     public List<Tree> getTreeObstacles() { return trees; }
@@ -80,5 +85,17 @@ public class Level {
 
         return (treesCoordinates.contains(coordinates)) || (tanksCoordinates.contains(coordinates))
                 || (borders.contains(coordinates)) || (tanksDestinationCoordinates.contains(coordinates));
+    }
+
+    public boolean checkHasTank(GridPoint2 coordinates) {
+        HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
+        HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
+        for (Player tank : otherTanks) {
+            tanksCoordinates.add(tank.getCoordinates());
+            tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
+        }
+        tanksCoordinates.add(player.getCoordinates());
+        tanksDestinationCoordinates.add(player.getDestinationCoordinates());
+        return tanksCoordinates.contains(coordinates) && (tanksDestinationCoordinates.contains(coordinates));
     }
 }

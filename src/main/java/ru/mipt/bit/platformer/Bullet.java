@@ -14,15 +14,29 @@ public class Bullet implements Movable {
     private float movementProgress = 1f;
     private float rotation;
 
-    Bullet(GridPoint2 initialCoordinates, float rotation) {
-        this.destinationCoordinates = initialCoordinates;
-        this.coordinates = new GridPoint2(this.destinationCoordinates);
+    Bullet(GridPoint2 tankCoordinates, float rotation) {
         this.rotation = rotation;
+        this.destinationCoordinates = new GridPoint2(tankCoordinates).add(getDirectionFromRotation().getMovementVector());
+        this.coordinates = new GridPoint2(this.destinationCoordinates);
+    }
+
+    private Direction getDirectionFromRotation() {
+        Direction direction = Direction.RIGHT;
+        for (Direction dir : Direction.values()) {
+            if (dir.getRotation() == rotation) {
+                direction = dir;
+            }
+        }
+        return direction;
     }
 
     @Override
     public boolean isMoving() {
         return isEqual(this.movementProgress, 1f);
+    }
+
+    public void moveFurther(Level level) {
+        move(getDirectionFromRotation(), level);
     }
 
     @Override
@@ -32,10 +46,13 @@ public class Bullet implements Movable {
             if (!level.checkHasObstacle(newCoordinates)) {
                 destinationCoordinates = newCoordinates;
                 movementProgress = 0f;
+            } else {
+                level.removeBullet(this);
             }
-//            if ((tanksCoordinates.contains(newCoordinates)) && (tanksDestinationCoordinates.contains(newCoordinates))) {
-//                // deal damage
-//            }
+
+            if (level.checkHasTank(newCoordinates)) {
+                // deal damage
+            }
             rotation = direction.getRotation();
         }
     }
