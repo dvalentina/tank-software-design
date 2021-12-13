@@ -14,6 +14,8 @@ public class Bullet implements Movable {
     private float movementProgress = 1f;
     private float rotation;
 
+    final int damage = 2;
+
     Bullet(GridPoint2 tankCoordinates, float rotation) {
         this.rotation = rotation;
         this.destinationCoordinates = new GridPoint2(tankCoordinates).add(getDirectionFromRotation().getMovementVector());
@@ -50,8 +52,9 @@ public class Bullet implements Movable {
                 level.removeBullet(this);
             }
 
-            if (level.checkHasTank(newCoordinates)) {
-                // deal damage
+            if (level.checkHasTank(newCoordinates) != null) {
+                Player tank = level.checkHasTank(newCoordinates);
+                tank.takeDamage(damage);
             }
             rotation = direction.getRotation();
         }

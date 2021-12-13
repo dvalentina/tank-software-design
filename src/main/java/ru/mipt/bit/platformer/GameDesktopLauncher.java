@@ -7,10 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.GridPoint2;
 import org.lwjgl.system.CallbackI;
 import ru.mipt.bit.platformer.commands.*;
-import ru.mipt.bit.platformer.events.BulletAddedListener;
-import ru.mipt.bit.platformer.events.BulletRemovedListener;
-import ru.mipt.bit.platformer.events.EventManager;
-import ru.mipt.bit.platformer.events.EventTypes;
+import ru.mipt.bit.platformer.events.*;
 
 import java.util.*;
 
@@ -29,6 +26,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     private EventManager events;
     private BulletAddedListener bulletAddedListener;
     private BulletRemovedListener bulletRemovedListener;
+    private TankRemovedListener tankRemovedListener;
 
     @Override
     public void create() {
@@ -39,8 +37,10 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
         graphics = new Graphics(level);
         bulletAddedListener = new BulletAddedListener(graphics);
         bulletRemovedListener = new BulletRemovedListener(graphics);
+        tankRemovedListener = new TankRemovedListener(graphics);
         events.subscribe(EventTypes.BULLET_ADDED, bulletAddedListener);
         events.subscribe(EventTypes.BULLET_REMOVED, bulletRemovedListener);
+        events.subscribe(EventTypes.TANK_REMOVED, tankRemovedListener);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
 //        commandsExecutor.addCommandQueue(gameAiAdapter.generateOtherTanksCommands(level));
 
         commandsExecutor.executeCommands();
-
+        level.checkTanksHealthPoints();
         graphics.calculateInterpolatedObjectScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);

@@ -2,9 +2,6 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
@@ -16,7 +13,7 @@ public class Player implements Movable {
     private float movementProgress = 1f;
     private float rotation;
 
-    private int healthPoints = 10;
+    private int healthPoints = 3;
 
     Player(GridPoint2 initialCoordinates, float rotation) {
         this.destinationCoordinates = initialCoordinates;
@@ -57,7 +54,7 @@ public class Player implements Movable {
         }
     }
 
-    public void decreaseHealthPoints(int damage) {
+    public void takeDamage(int damage) {
         healthPoints -= damage;
     }
 

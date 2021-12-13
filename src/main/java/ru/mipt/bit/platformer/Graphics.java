@@ -81,4 +81,9 @@ public class Graphics implements Disposable {
         List<Bullet> bullets = level.getBullets();
         bulletsGraphics.removeIf(bulletGraphics -> !bullets.contains(bulletGraphics.getSource()));
     }
+
+    public void removeTank() {
+        List<Player> otherTanks = level.getOtherTanks();
+        otherTanksGraphics.removeIf(otherTanksGraphics -> !otherTanks.contains(otherTanksGraphics.getSource()));
+    }
 }

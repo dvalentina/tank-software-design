@@ -5,6 +5,7 @@ import ru.mipt.bit.platformer.events.EventManager;
 import ru.mipt.bit.platformer.events.EventTypes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -87,15 +88,27 @@ public class Level {
                 || (borders.contains(coordinates)) || (tanksDestinationCoordinates.contains(coordinates));
     }
 
-    public boolean checkHasTank(GridPoint2 coordinates) {
-        HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
-        HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
+    public Player checkHasTank(GridPoint2 coordinates) {
+        HashMap<GridPoint2, Player> tanksCoordinates = new HashMap<>();
+        HashMap<GridPoint2, Player> tanksDestinationCoordinates = new HashMap<>();
         for (Player tank : otherTanks) {
-            tanksCoordinates.add(tank.getCoordinates());
-            tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
+            tanksCoordinates.put(tank.getCoordinates(), tank);
+            tanksDestinationCoordinates.put(tank.getDestinationCoordinates(), tank);
         }
-        tanksCoordinates.add(player.getCoordinates());
-        tanksDestinationCoordinates.add(player.getDestinationCoordinates());
-        return tanksCoordinates.contains(coordinates) && (tanksDestinationCoordinates.contains(coordinates));
+        tanksCoordinates.put(player.getCoordinates(), player);
+        tanksDestinationCoordinates.put(player.getDestinationCoordinates(), player);
+        if (tanksCoordinates.containsKey(coordinates)) {
+            return tanksCoordinates.get(coordinates);
+        } else if (tanksDestinationCoordinates.containsKey(coordinates)) {
+            return tanksDestinationCoordinates.get(coordinates);
+        }
+        return null;
+    }
+
+    public void checkTanksHealthPoints() {
+        final boolean isRemoved = otherTanks.removeIf(tank -> tank.getHealthPoints() < 0);
+        if (isRemoved) {
+            events.notify(EventTypes.TANK_REMOVED);
+        }
     }
 }
