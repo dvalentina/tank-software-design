@@ -56,7 +56,7 @@ public class GameAiAdapter implements Game{
         return orientation;
     }
 
-    private org.awesome.ai.state.movable.Player getAiPlayer(Player player) {
+    private org.awesome.ai.state.movable.Player getAiPlayer(Tank player) {
         org.awesome.ai.state.movable.Player.PlayerBuilder builder = new org.awesome.ai.state.movable.Player.PlayerBuilder()
                 .source(player)
                 .x(player.getCoordinates().x)
@@ -76,9 +76,9 @@ public class GameAiAdapter implements Game{
         return obstacles;
     }
 
-    private List<Bot> getAiBots(ArrayList<Player> otherTanks) {
+    private List<Bot> getAiBots(ArrayList<Tank> otherTanks) {
         List<Bot> bots = new ArrayList<>();
-        for (Player tank : otherTanks) {
+        for (Tank tank : otherTanks) {
             Bot.BotBuilder builder = new Bot.BotBuilder()
                     .source(tank)
                     .x(tank.getCoordinates().x)
@@ -94,13 +94,13 @@ public class GameAiAdapter implements Game{
     @Override
     public ArrayDeque<Command> generateOtherTanksCommands(Level level) {
         ArrayDeque<Command> commands = new ArrayDeque<>();
-        ArrayList<Player> otherTanks = level.getOtherTanks();
+        ArrayList<Tank> otherTanks = level.getOtherTanks();
 
         List<Recommendation> recommendations = ai.recommend(getAiGameState(level));
         for (Recommendation recommendation : recommendations) {
             Object objectSource = recommendation.getActor().getSource();
             if (otherTanks.contains(objectSource)) {
-                Player tank = otherTanks.get(otherTanks.indexOf(objectSource));
+                Tank tank = otherTanks.get(otherTanks.indexOf(objectSource));
                 Action action = recommendation.getAction();
 
                 switch (action) {

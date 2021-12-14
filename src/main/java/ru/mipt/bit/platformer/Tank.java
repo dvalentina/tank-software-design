@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Player implements Movable, Killable {
+public class Tank implements Movable, Killable {
     private State state;
     // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private GridPoint2 coordinates;
@@ -21,7 +21,7 @@ public class Player implements Movable, Killable {
     private final int maxLives = 5;
     private int healthPoints = maxLives;
 
-    Player(GridPoint2 initialCoordinates, float rotation) {
+    Tank(GridPoint2 initialCoordinates, float rotation) {
         this.destinationCoordinates = initialCoordinates;
         this.coordinates = new GridPoint2(this.destinationCoordinates);
         this.rotation = rotation;

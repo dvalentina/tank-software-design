@@ -12,20 +12,20 @@ import java.util.List;
 public class Level {
     public final EventManager events;
 
-    private Player player;
+    private Tank player;
     private List<Tree> trees;
-    private ArrayList<Player> otherTanks;
+    private ArrayList<Tank> otherTanks;
     private ArrayList<Bullet> bullets = new ArrayList<>();
 
     private int height;
     private int width;
     private HashSet<GridPoint2> borders = new HashSet<>();
 
-    Level(Player player, ArrayList<Tree> trees, int height, int width, EventManager events) {
+    Level(Tank player, ArrayList<Tree> trees, int height, int width, EventManager events) {
         this(player, trees, null, height, width, events);
     }
 
-    Level(Player player, ArrayList<Tree> trees, ArrayList<Player> otherTanks, int height, int width, EventManager events) {
+    Level(Tank player, ArrayList<Tree> trees, ArrayList<Tank> otherTanks, int height, int width, EventManager events) {
         this.player = player;
         this.trees = trees;
         this.otherTanks = otherTanks;
@@ -45,11 +45,11 @@ public class Level {
         events.notify(EventTypes.BULLET_REMOVED);
     }
 
-    public Player getPlayer() { return player; }
+    public Tank getPlayer() { return player; }
 
     public List<Tree> getTreeObstacles() { return trees; }
 
-    public ArrayList<Player> getOtherTanks() {
+    public ArrayList<Tank> getOtherTanks() {
         return otherTanks;
     }
 
@@ -77,7 +77,7 @@ public class Level {
         }
         HashSet<GridPoint2> tanksCoordinates = new HashSet<>();
         HashSet<GridPoint2> tanksDestinationCoordinates = new HashSet<>();
-        for (Player tank : otherTanks) {
+        for (Tank tank : otherTanks) {
             tanksCoordinates.add(tank.getCoordinates());
             tanksDestinationCoordinates.add(tank.getDestinationCoordinates());
         }
@@ -88,10 +88,10 @@ public class Level {
                 || (borders.contains(coordinates)) || (tanksDestinationCoordinates.contains(coordinates));
     }
 
-    public Player checkHasTank(GridPoint2 coordinates) {
-        HashMap<GridPoint2, Player> tanksCoordinates = new HashMap<>();
-        HashMap<GridPoint2, Player> tanksDestinationCoordinates = new HashMap<>();
-        for (Player tank : otherTanks) {
+    public Tank checkHasTank(GridPoint2 coordinates) {
+        HashMap<GridPoint2, Tank> tanksCoordinates = new HashMap<>();
+        HashMap<GridPoint2, Tank> tanksDestinationCoordinates = new HashMap<>();
+        for (Tank tank : otherTanks) {
             tanksCoordinates.put(tank.getCoordinates(), tank);
             tanksDestinationCoordinates.put(tank.getDestinationCoordinates(), tank);
         }

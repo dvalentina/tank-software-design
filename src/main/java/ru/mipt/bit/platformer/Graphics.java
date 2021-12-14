@@ -28,7 +28,7 @@ public class Graphics implements Disposable {
         batch = new SpriteBatch();
         textures = loadTextures();
         playerGraphics = new ObjectGraphics(textures.get("blueTank"), level.getPlayer());
-        for (Player tank : level.getOtherTanks()) {
+        for (Tank tank : level.getOtherTanks()) {
             otherTanksGraphics.add(new ObjectGraphics(textures.get("blueTank"), tank));
         }
         levelGraphics = new LevelGraphics(level);
@@ -107,7 +107,7 @@ public class Graphics implements Disposable {
     }
 
     public void removeTank() {
-        List<Player> otherTanks = level.getOtherTanks();
+        List<Tank> otherTanks = level.getOtherTanks();
         otherTanksGraphics.removeIf(otherTanksGraphics -> !otherTanks.contains(otherTanksGraphics.getSource()));
     }
 }

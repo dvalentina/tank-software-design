@@ -7,7 +7,7 @@ import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.D;
 
 public class InputHandler {
-    public static Command handlePlayerInput(Player player, Level level) {
+    public static Command handlePlayerInput(Tank player, Level level) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             return new MoveUpCommand(player, level);
         }

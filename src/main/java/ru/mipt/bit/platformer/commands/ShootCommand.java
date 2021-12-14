@@ -1,19 +1,19 @@
 package ru.mipt.bit.platformer.commands;
 
 import ru.mipt.bit.platformer.Level;
-import ru.mipt.bit.platformer.Player;
+import ru.mipt.bit.platformer.Tank;
 
 public class ShootCommand implements Command {
-    private final Player player;
+    private final Tank tank;
     private final Level level;
 
-    public ShootCommand(Player player, Level level) {
-        this.player = player;
+    public ShootCommand(Tank tank, Level level) {
+        this.tank = tank;
         this.level = level;
     }
 
     @Override
     public void execute() {
-        player.shoot(level);
+        tank.shoot(level);
     }
 }

@@ -2,9 +2,6 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
@@ -13,11 +10,11 @@ public class Bullet implements Movable {
     private GridPoint2 destinationCoordinates;
     private float movementProgress = 1f;
     private float rotation;
-    private final Player tank;
+    private final Tank tank;
 
     final int damage = 2;
 
-    Bullet(Player tank, Level level) {
+    Bullet(Tank tank, Level level) {
         this.tank = tank;
         this.rotation = tank.getRotation();
         this.destinationCoordinates = new GridPoint2(tank.getDestinationCoordinates()).add(Direction.getMovementVectorFromRotation(rotation));
@@ -40,7 +37,7 @@ public class Bullet implements Movable {
             this.tank.removeBullet(this);
         }
         if (level.checkHasTank(coordinates) != null) {
-            Player tank = level.checkHasTank(coordinates);
+            Tank tank = level.checkHasTank(coordinates);
             tank.takeDamage(damage);
         }
 
@@ -55,7 +52,7 @@ public class Bullet implements Movable {
             }
 
             if (level.checkHasTank(newCoordinates) != null) {
-                Player tank = level.checkHasTank(newCoordinates);
+                Tank tank = level.checkHasTank(newCoordinates);
                 tank.takeDamage(damage);
             }
             rotation = direction.getRotation();

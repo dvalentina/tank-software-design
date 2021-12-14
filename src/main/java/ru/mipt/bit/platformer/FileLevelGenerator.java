@@ -22,7 +22,7 @@ public class FileLevelGenerator implements LevelGenerator{
     }
 
     private Level createLevelFromArray(ArrayList<ArrayList<Character>> levelArray, EventManager events) {
-        Player player = new Player(new GridPoint2(0, 0), 0f);
+        Tank player = new Tank(new GridPoint2(0, 0), 0f);
         ArrayList<Tree> trees = new ArrayList<>();
         for (int i = 0; i < levelArray.size(); i++) {
             for (int j = 0; j < levelArray.get(i).size(); j++) {
@@ -31,7 +31,7 @@ public class FileLevelGenerator implements LevelGenerator{
                     trees.add(new Tree(new GridPoint2(j, i)));
                 }
                 else if (symbol == 'X') {
-                    player = new Player(new GridPoint2(j, i), 0f);
+                    player = new Tank(new GridPoint2(j, i), 0f);
                 }
             }
         }

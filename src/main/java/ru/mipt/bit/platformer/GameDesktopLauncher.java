@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import ru.mipt.bit.platformer.commands.*;
 import ru.mipt.bit.platformer.events.*;
 
@@ -56,10 +55,10 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     }
 
     private void createCommands() {
-        Player player = level.getPlayer();
+        Tank tank = level.getPlayer();
         List<Bullet> bullets = level.getBullets();
 
-        commandsExecutor.addCommand(InputHandler.handlePlayerInput(player, level));
+        commandsExecutor.addCommand(InputHandler.handlePlayerInput(tank, level));
         commandsExecutor.addCommandQueue(generateOtherTanksCommands(level));
         for (Bullet bullet : bullets) {
             commandsExecutor.addCommand(new MoveBulletCommand(bullet, level));
@@ -72,14 +71,14 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     }
 
     private void calculateMovement() {
-        Player player = level.getPlayer();
-        List<Player> otherTanks = level.getOtherTanks();
+        Tank player = level.getPlayer();
+        List<Tank> otherTanks = level.getOtherTanks();
         List<Bullet> bullets = level.getBullets();
 
         graphics.calculateInterpolatedObjectScreenCoordinates();
 
         player.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
-        for (Player tank : otherTanks) {
+        for (Tank tank : otherTanks) {
             tank.continueMovement(getTimeSinceLastRender(), MOVEMENT_SPEED);
         }
         for (Bullet bullet : bullets) {
@@ -90,7 +89,7 @@ public class GameDesktopLauncher implements ApplicationListener, Game {
     @Override
     public ArrayDeque<Command> generateOtherTanksCommands(Level level) {
         ArrayDeque<Command> commands = new ArrayDeque<>();
-        for (Player tank : level.getOtherTanks()) {
+        for (Tank tank : level.getOtherTanks()) {
             final int variant = new Random().nextInt(Direction.values().length + 1);
 
             switch (variant) {

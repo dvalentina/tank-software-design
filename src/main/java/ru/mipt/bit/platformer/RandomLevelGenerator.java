@@ -20,11 +20,11 @@ public class RandomLevelGenerator implements LevelGenerator{
         for (GridPoint2 coordinates : treesCoordinates) {
             trees.add(new Tree(coordinates));
         }
-        ArrayList<Player> tanks = new ArrayList<>();
+        ArrayList<Tank> tanks = new ArrayList<>();
         for (GridPoint2 coordinates : tanksCoordinates) {
-            tanks.add(new Player(coordinates, 0f));
+            tanks.add(new Tank(coordinates, 0f));
         }
-        Player player = new Player(playerCoordinates, 0f);
+        Tank player = new Tank(playerCoordinates, 0f);
 
         return new Level(player, trees, tanks, levelHeight, levelWidth, events);
     }
