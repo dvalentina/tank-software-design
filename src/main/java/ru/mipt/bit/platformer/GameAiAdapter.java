@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class GameAiAdapter implements Game{
+public class GameAiAdapter{
     private AI ai = new NotRecommendingAI();
 
     private GameState getAiGameState(Level level) {
@@ -91,7 +91,6 @@ public class GameAiAdapter implements Game{
         return bots;
     }
 
-    @Override
     public ArrayDeque<Command> generateOtherTanksCommands(Level level) {
         ArrayDeque<Command> commands = new ArrayDeque<>();
         ArrayList<Tank> otherTanks = level.getOtherTanks();
